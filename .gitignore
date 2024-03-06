@@ -22,3 +22,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Katalogi IDE i edytory
+.idea/
+
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# Pliki tymczasowe Pythona
+*.pyc
+__pycache__/
+
+# Środowiska wirtualne (jeśli istnieje)
+venv/
+.env
