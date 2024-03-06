@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Container, Typography, Button, Card, CardContent } from '@mui/material';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container maxWidth="sm" style={{ marginTop: '40px' }}>
+      <Typography variant="h2" component="h1" gutterBottom>
+        Witaj w React z MUI!
+      </Typography>
+      <Button variant="contained" color="primary">
+        Kliknij mnie
+      </Button>
+      <Card style={{ marginTop: '20px' }}>
+        <CardContent>
+          <Typography variant="h5" component="h2">
+            To jest karta
+          </Typography>
+          <Typography component="p">
+            Material-UI zapewnia bogaty zestaw gotowych do użycia komponentów, które ułatwiają szybkie tworzenie interfejsów użytkownika.
+          </Typography>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
 
