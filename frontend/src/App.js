@@ -1,27 +1,23 @@
 import React from 'react';
-import { Container, Typography, Button, Card, CardContent } from '@mui/material';
+import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/Home'; // Załóżmy, że masz komponent Home w odpowiedniej ścieżce
+
 
 function App() {
   return (
-    <Container maxWidth="sm" style={{ marginTop: '40px' }}>
-      <Typography variant="h2" component="h1" gutterBottom>
-        Witaj w React z MUI!
-      </Typography>
-      <Button variant="contained" color="primary">
-        Kliknij mnie
-      </Button>
-      <Card style={{ marginTop: '20px' }}>
-        <CardContent>
-          <Typography variant="h5" component="h2">
-            To jest karta
-          </Typography>
-          <Typography component="p">
-            Material-UI zapewnia bogaty zestaw gotowych do użycia komponentów, które ułatwiają szybkie tworzenie interfejsów użytkownika.
-          </Typography>
-        </CardContent>
-      </Card>
-    </Container>
+    
+ 
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>  
+    </Router>
+ 
+
   );
 }
 
 export default App;
+
