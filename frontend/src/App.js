@@ -1,7 +1,8 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home'; // Załóżmy, że masz komponent Home w odpowiedniej ścieżce
+import Home from './components/Home';
+import Footer from './components/Footer';
 
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-      </Routes>  
+      </Routes> 
+      <Footer /> 
     </Router>
  
 

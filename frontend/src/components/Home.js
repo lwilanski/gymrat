@@ -3,6 +3,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import background from './background.jpg';
 
 function Home() {
   const [motto, setMotto] = useState("Be Stronger");
@@ -20,8 +21,17 @@ function Home() {
   }, []);
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
+    <Container maxWidth="x1"
+    sx={{ 
+      backgroundImage: `url(${background})`,
+      minHeight: '90vh',
+      backgroundSize: 'cover',
+     }}>
+      <Box 
+      sx={{ 
+      
+        
+       }}>
         <Typography variant="h4" component="h1" gutterBottom>
           ZOstań Szczurem a nie bykiem hgff
         </Typography>

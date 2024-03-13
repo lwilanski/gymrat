@@ -1,4 +1,3 @@
-// theme.js
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -14,6 +13,13 @@ const theme = createTheme({
     },
     background: {
       default: '#f4f4f4',
+    },
+    text: {
+      primary: '#FFFFFF', // Główny kolor tekstu
+      secondary: '#fdc705', 
+      third: "#757575" ,// Drugorzędny kolor tekstu
+      disabled:'#9e9e9e', // Kolor dla nieaktywnego tekstu
+      hint: '#bdbdbd', // Kolor dla tekstu typu 'podpowiedź'
     },
   },
   typography: {
