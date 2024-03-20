@@ -1,71 +1,76 @@
 import React from 'react';
-import { Box, Container, Typography, Link, Grid, useTheme } from '@mui/material';
+import { Box, Container, Typography, Link, Grid, IconButton } from '@mui/material';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
 
-// Footer component using Material-UI
 const Footer = () => {
-
-    const theme = useTheme(); // Używa hooka useTheme, aby uzyskać dostęp do motywu
-
-  return (
-    // Box component works as a wrapper for your footer. You can control spacing, layout, and background.
-    <Box 
-      component="footer"
-      sx={{
-        py: 3, // padding Y-axis (top & bottom)
-        px: 2, // padding X-axis (left & right)
-        mt: 'auto', // margin top auto for pushing the footer to the bottom of the page
-        backgroundColor: theme.palette.primary.main, // background color from theme.palette
-    
-      }}
-    >
-      <Container maxWidth="lg">
-        {/* Container limits the width of the content inside it, based on maxWidth prop */}
-        <Grid container spacing={5}>
-          {/* Grid container for layout. `spacing` controls the space between grid items */}
-          <Grid item xs={12} sm={4}>
-            {/* Grid item for a section of the footer. Adjust `xs` and `sm` for responsive settings */}
-            <Typography variant="h6" color="textSecondary" gutterBottom>
-              {/* Typography for text styling */}
-              Regulamin i polityka prywatności
-            </Typography>
-            <ul>
-              {/* List of links or items */}
-              <li>
-                <Link href="#" variant="subtitle1" color="textPrimary">
-                  {/* Link component for navigation */}
-                  Regulamin Strony
-                </Link>
-              </li>
-              <li>
-                <Link href="#" variant="subtitle1" color="textPrimary">
-                  Polityka Prywatności
-                </Link>
-              </li>
-            </ul>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" color="textSecondary" gutterBottom>
-              Footer Section 2
-            </Typography>
-            {/* Repeat list as needed per section */}
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" color="textSecondary" gutterBottom>
-              Footer Section 3
-            </Typography>
-            {/* More links or information */}
-          </Grid>
-        </Grid>
-        <Box mt={5}>
-          {/* Box for any additional information at the bottom of the footer, like copyright */}
-          <Typography variant="body2" color="textThird" align="center">
-            {/* Typography for styled text */}
-            © {new Date().getFullYear()} GymRat
-          </Typography>
+    return (
+        <Box 
+            component="footer" 
+            sx={{
+                py: 3,
+                px: 2,
+                mt: 'auto',
+                backgroundColor: 'primary.main', // Ustawienie koloru tła na kolor główny motywu
+                color: 'white', // Ustawienie koloru tekstu na biały dla kontrastu
+            }}
+        >
+            <Container maxWidth="lg">
+                <Grid container spacing={5}>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="h6" gutterBottom color="inherit">
+                            O nas
+                        </Typography>
+                        <Typography variant="subtitle1" color="inherit">
+                            Jesteśmy platformą dla wszystkich entuzjastów fitnessu.
+                        </Typography>
+                        <Box mt={1}>
+                            <IconButton aria-label="facebook" href="https://facebook.com" color="inherit">
+                                <FacebookIcon />
+                            </IconButton>
+                            <IconButton aria-label="instagram" href="https://instagram.com" color="inherit">
+                                <InstagramIcon />
+                            </IconButton>
+                            <IconButton aria-label="twitter" href="https://twitter.com" color="inherit">
+                                <TwitterIcon />
+                            </IconButton>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="h6" gutterBottom color="inherit">
+                            Linki
+                        </Typography>
+                        <Link href="#" variant="subtitle1" display="block" color="inherit">
+                            Blog
+                        </Link>
+                        <Link href="#" variant="subtitle1" display="block" color="inherit">
+                            FAQ
+                        </Link>
+                        <Link href="#" variant="subtitle1" display="block" color="inherit">
+                            Kontakt
+                        </Link>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="h6" gutterBottom color="inherit">
+                            Regulamin i polityka prywatności
+                        </Typography>
+                        <Link href="#" variant="subtitle1" display="block" color="inherit">
+                            Regulamin Strony
+                        </Link>
+                        <Link href="#" variant="subtitle1" display="block" color="inherit">
+                            Polityka Prywatności
+                        </Link>
+                    </Grid>
+                </Grid>
+                <Box mt={5} textAlign="center">
+                    <Typography variant="body2" color="inherit">
+                        © {new Date().getFullYear()} GymRat - Wszelkie prawa zastrzeżone.
+                    </Typography>
+                </Box>
+            </Container>
         </Box>
-      </Container>
-    </Box>
-  );
+    );
 };
 
 export default Footer;
