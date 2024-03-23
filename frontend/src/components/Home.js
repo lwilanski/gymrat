@@ -7,7 +7,7 @@ import background from './background.jpg';
 
 function Home() {
   const [motto, setMotto] = useState("Be Stronger");
-  const mottos = ["Be Stronger", "Be Fitter", "Be a GymRat"];
+  const mottos = ["Be Stronger", "Be Fitter", "Become a GymRat"];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -29,30 +29,25 @@ function Home() {
      }}>
       <Box 
       sx={{ 
-      
-        
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+
        }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          ZOstań Szczurem a nie bykiem hgff
+        <Typography variant="h4" component="h1" gutterBottom color="secondary">
+          Welcome to the GymRat
         </Typography>
-        <Typography variant="body1" gutterBottom>
-           Niezle motto co 
-        </Typography>
-        <Typography variant="h5" gutterBottom>
+  
+        <Typography variant="h5" gutterBottom color="secondary">
           {motto === "Be a GymRat" ? (
             <span>
               {"Be a "}
-              <Typography component="span" color="secondary">
-                GymRat
-              </Typography>
+              
             </span>
           ) : (
             motto
           )}
         </Typography>
-        <Button variant="contained" color="primary">
-          Dowiedz się więcej
-        </Button>
       </Box>
     </Container>
   );
