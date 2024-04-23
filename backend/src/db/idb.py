@@ -16,3 +16,8 @@ class IDB(ABC):
     def add_user(self, user):
         """Add a user to the database"""
         pass
+
+    @abstractmethod
+    def add_description(self, user):
+        """Add a description to the database"""
+        pass

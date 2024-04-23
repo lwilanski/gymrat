@@ -12,8 +12,10 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import { useTheme } from '@mui/material/styles';
 
 function Exercises() {
+  const theme = useTheme();
   const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
@@ -23,20 +25,19 @@ function Exercises() {
       .catch(error => console.error('Error:', error));
   }, []);
 
-  // Przykładowe funkcje obsługi - zaktualizuj je, aby odpowiadały logice Twojej aplikacji
   const handleDelete = (index) => {
-    console.log('Usuwanie elementu o indeksie', index);
-    // Tutaj logika usuwania
+    console.log('Deleting item at index', index);
+    // Add deletion logic here
   };
 
   const handleEdit = (index) => {
-    console.log('Edycja elementu o indeksie', index);
-    // Tutaj logika edycji
+    console.log('Editing item at index', index);
+    // Add edit logic here
   };
 
   const handleAdd = () => {
-    console.log('Dodawanie nowego elementu');
-    // Tutaj logika dodawania
+    console.log('Adding a new item');
+    // Add add logic here
   };
 
   return (
@@ -44,10 +45,11 @@ function Exercises() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ color: 'primary.main' }}>NAME</TableCell>
-            <TableCell sx={{ color: 'primary.main' }} align="right">DIFFICULTY</TableCell>
-            <TableCell sx={{ color: 'primary.main' }} align="right">BODY PART</TableCell>
-            <TableCell sx={{ color: 'primary.main' }} align="right">
+            <TableCell sx={{ color: theme.palette.text.third }}>Name</TableCell>
+            <TableCell sx={{ color: theme.palette.text.third }} align="right">Difficulty</TableCell>
+            <TableCell sx={{ color: theme.palette.text.third }} align="right">Body Part</TableCell>
+            <TableCell sx={{ color: theme.palette.text.third }} align="right">Description</TableCell>
+            <TableCell align="right">
               <IconButton onClick={handleAdd}>
                 <AddBoxIcon />
               </IconButton>
@@ -60,12 +62,13 @@ function Exercises() {
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell sx={{ color: 'primary.main' }} component="th" scope="row">
+              <TableCell sx={{ color: theme.palette.text.third }} component="th" scope="row">
                 {exercise.name}
               </TableCell>
-              <TableCell sx={{ color: 'primary.main' }} align="right">{exercise.difficulty}</TableCell>
-              <TableCell sx={{ color: 'primary.main' }} align="right">{exercise.body_part}</TableCell>
-              <TableCell sx={{ color: 'primary.main' }} align="right">
+              <TableCell sx={{ color: theme.palette.text.third }} align="right">{exercise.difficulty}</TableCell>
+              <TableCell sx={{ color: theme.palette.text.third }} align="right">{exercise.body_part}</TableCell>
+              <TableCell sx={{ color: theme.palette.text.third }} align="right">{exercise.description}</TableCell>
+              <TableCell align="right">
                 <IconButton onClick={() => handleEdit(index)}>
                   <EditIcon />
                 </IconButton>

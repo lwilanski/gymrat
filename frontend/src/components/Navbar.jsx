@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, useTheme } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import logo from './logo.png'; 
+import logo from '../images/logo.png'; 
 import Avatar from '@mui/material/Avatar';
 
 const Navbar = () => {
