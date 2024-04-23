@@ -63,9 +63,7 @@ function Workouts() {
               sx={{ input: { color: theme.palette.text.third } }}
             >
               {availableExercises.map((ex, i) => (
-                <MenuItem 
-                  key={i} value={ex.name}>{ex.name}
-                  sx={{ input: { color: theme.palette.text.third } }}</MenuItem>
+                <MenuItem key={i} value={ex.name}>{ex.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
