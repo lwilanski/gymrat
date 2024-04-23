@@ -26,6 +26,11 @@ class InMemoryDB(IDB):
         self.save_data()
         return exercise
 
+    def delete_exercise(self, exercise_id):
+        self.exercises = [ex for ex in self.exercises if ex.id != exercise_id]
+        self.save_data()
+        return {"message": "Exercise deleted"}
+
     def get_exercises(self):
         return self.exercises
     

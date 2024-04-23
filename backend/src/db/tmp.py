@@ -1,5 +1,7 @@
 import json
 from src.db.inmemorydb import InMemoryDB
+import uuid
+
 
 exercises = [
     {
@@ -33,6 +35,7 @@ exercises = [
         "description": "The dumbbell bicep curl is an isolation exercise that works the biceps. It is a staple in any bicep workout."
     }
 ]
-test = InMemoryDB()
 
-print(test.get_exercises())
+# Generowanie pięciu losowych UUID
+uuids = [str(uuid.uuid4()) for _ in range(5)]
+print(uuids)
