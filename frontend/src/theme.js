@@ -15,9 +15,9 @@ const theme = createTheme({
       default: '#f4f4f4',
     },
     text: {
-      primary: '#FFFFFF', // Główny kolor tekstu
+      primary: '#000000', // Główny kolor tekstu
       secondary: '#fdc705', 
-      third: '#000000' ,// Drugorzędny kolor tekstu
+      third: '#FFFFFF' ,// Drugorzędny kolor tekstu
       disabled:'#9e9e9e', // Kolor dla nieaktywnego tekstu
       hint: '#bdbdbd', // Kolor dla tekstu typu 'podpowiedź'
     },
