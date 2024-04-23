@@ -49,7 +49,7 @@ function Workouts() {
         fullWidth
         value={workoutPlan.name}
         onChange={e => setWorkoutPlan({ ...workoutPlan, name: e.target.value })}
-        sx={{ marginBottom: 2, input: { color: theme.palette.text.third } }}
+        sx={{ marginBottom: 2 }}
       />
       {workoutPlan.exercises.map((exercise, index) => (
         <Box key={index} sx={{ marginBottom: 2 }}>
@@ -60,7 +60,7 @@ function Workouts() {
               value={exercise.name}
               label="Exercise Name"
               onChange={e => handleExerciseChange(index, 'name', e.target.value)}
-              sx={{ input: { color: theme.palette.text.third } }}
+             
             >
               {availableExercises.map((ex, i) => (
                 <MenuItem key={i} value={ex.name}>{ex.name}</MenuItem>
@@ -73,7 +73,7 @@ function Workouts() {
             variant="outlined"
             value={exercise.reps}
             onChange={e => handleExerciseChange(index, 'reps', e.target.value)}
-            sx={{ width: '100px', marginRight: 1, input: { color: theme.palette.text.third } }}
+            sx={{ width: '100px', marginRight: 1 }}
           />
           <TextField
             label="Sets"
@@ -81,7 +81,7 @@ function Workouts() {
             variant="outlined"
             value={exercise.sets}
             onChange={e => handleExerciseChange(index, 'sets', e.target.value)}
-            sx={{ width: '100px', input: { color: theme.palette.text.third } }}
+            sx={{ width: '100px' }}
           />
         </Box>
       ))}

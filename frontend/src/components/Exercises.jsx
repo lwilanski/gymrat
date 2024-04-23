@@ -45,10 +45,10 @@ function Exercises() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ color: theme.palette.text.third }}>Name</TableCell>
-            <TableCell sx={{ color: theme.palette.text.third }} align="right">Difficulty</TableCell>
-            <TableCell sx={{ color: theme.palette.text.third }} align="right">Body Part</TableCell>
-            <TableCell sx={{ color: theme.palette.text.third }} align="right">Description</TableCell>
+            <TableCell >Name</TableCell>
+            <TableCell  align="right">Difficulty</TableCell>
+            <TableCell  align="right">Body Part</TableCell>
+            <TableCell  align="right">Description</TableCell>
             <TableCell align="right">
               <IconButton onClick={handleAdd}>
                 <AddBoxIcon />
@@ -62,12 +62,12 @@ function Exercises() {
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell sx={{ color: theme.palette.text.third }} component="th" scope="row">
+              <TableCell  component="th" scope="row">
                 {exercise.name}
               </TableCell>
-              <TableCell sx={{ color: theme.palette.text.third }} align="right">{exercise.difficulty}</TableCell>
-              <TableCell sx={{ color: theme.palette.text.third }} align="right">{exercise.body_part}</TableCell>
-              <TableCell sx={{ color: theme.palette.text.third }} align="right">{exercise.description}</TableCell>
+              <TableCell  align="right">{exercise.difficulty}</TableCell>
+              <TableCell  align="right">{exercise.body_part}</TableCell>
+              <TableCell  align="right">{exercise.description}</TableCell>
               <TableCell align="right">
                 <IconButton onClick={() => handleEdit(index)}>
                   <EditIcon />
