@@ -5,7 +5,7 @@ import json
 class InMemoryDB(IDB):
     def __init__(self):
         self.users = []
-        self.data_path = "exercises.json"
+        self.data_path = "src/db/exercises.json"
 
         with open(self.data_path, 'r') as file:
             self.exercises = json.load(file)
