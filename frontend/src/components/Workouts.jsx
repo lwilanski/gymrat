@@ -10,7 +10,7 @@ function Workouts() {
   const [availableExercises, setAvailableExercises] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/exercises')
+    fetch('http://localhost:8000/exercises')
       .then(response => response.json())
       .then(data => setAvailableExercises(data))
       .catch(error => console.error('Error:', error));
@@ -63,7 +63,9 @@ function Workouts() {
               sx={{ input: { color: theme.palette.text.third } }}
             >
               {availableExercises.map((ex, i) => (
-                <MenuItem key={i} value={ex.name}>{ex.name}</MenuItem>
+                <MenuItem 
+                  key={i} value={ex.name}>{ex.name}
+                  sx={{ input: { color: theme.palette.text.third } }}</MenuItem>
               ))}
             </Select>
           </FormControl>
