@@ -9,6 +9,7 @@ services:
       - UVICORN_HOST=0.0.0.0
       - UVICORN_PORT=8000
       - SOME_OTHER_ENV_VAR=value
+      - MONGO_URI=mongodb://mongo:27017/gymrat
     depends_on:
       - mongo
 
