@@ -1,15 +1,18 @@
 from fastapi import FastAPI
 from .api.endpoints import router
 from fastapi.middleware.cors import CORSMiddleware
-
+from motor.motor_asyncio import AsyncIOMotorClient
+import os  # Import needed to access environment variables
 
 app = FastAPI()
 
+# Use environment variable for MongoDB URI, which is set in docker-compose.yml
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/gymrat")
 
-origins = [
-    "http://localhost:3000"
-]
+client = AsyncIOMotorClient(MONGO_URI)
+db = client.gymrat
 
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -19,4 +22,14 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
+@app.on_event("startup")
+async def startup_event():
+    print("Application start!")
+    # Here you could add code to check database connectivity or initialize something
+
+@app.on_event("shutdown")
+def shutdown_event():
+    client.close()
+    print("Application shutdown!")
 
