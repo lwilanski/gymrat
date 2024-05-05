@@ -33,7 +33,3 @@ class InMemoryDB(IDB):
 
     def get_exercises(self):
         return self.exercises
-    
-    def add_description(self, description):
-        self.exercises.append(description)
-        return description
