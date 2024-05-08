@@ -7,7 +7,7 @@ import background from '../images/background.jpg';
 
 function Home() {
   const [motto, setMotto] = useState("Be Stronger");
-  const mottos = ["Be Stronger", "Be Fitter", "Become a GymRat"];
+  const mottos = ["Become Stronger", "Become Fitter", "Become GymRat"];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -35,7 +35,7 @@ function Home() {
 
        }}>
         <Typography variant="h4" component="h1" gutterBottom color="secondary">
-          Welcome to the GymRattttt
+          Welcome to the GymRat
         </Typography>
   
         <Typography variant="h5" gutterBottom color="secondary">

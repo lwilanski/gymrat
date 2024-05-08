@@ -1,15 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
+from ..db.mongodb import MongoDB
 
 router = APIRouter()
 
-user_db = {
-    "minch@agh.edu.pl": "password1",
-}
+
+class AuthDetails(BaseModel):
+    username: str
+    password: str
 
 
-@router.get("/auth", response_model=str)
-def authenticate(username: str, password: str):
-    if username in user_db:
-        if password == user_db[username]:
-            return username
-    return ""
+@router.post("/auth")  # Tutaj dodajesz ścieżkę i metodę HTTP
+async def authenticate(auth_details: AuthDetails, db: MongoDB = Depends(MongoDB)):
+    user = await db.find_user(auth_details.username)
+    if user and user['password'] == auth_details.password:
+        return {"message": "Logged in successfully"}
+    else:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
