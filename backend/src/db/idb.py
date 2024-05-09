@@ -21,3 +21,11 @@ class IDB(ABC):
     def add_description(self, user):
         """Add a description to the database"""
         pass
+
+    @abstractmethod
+    async def update_exercise(self, exercise_id, exercise_data):
+        pass
+
+    @abstractmethod
+    async def delete_exercise(self, exercise_id):
+        pass

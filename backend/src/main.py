@@ -6,7 +6,6 @@ import os  # Import needed to access environment variables
 
 app = FastAPI()
 
-# Use environment variable for MongoDB URI, which is set in docker-compose.yml
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/gymrat")
 
 client = AsyncIOMotorClient(MONGO_URI)
