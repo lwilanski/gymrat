@@ -1,14 +1,11 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, useTheme } from '@mui/material';
+import { AppBar, Toolbar, Typography, useTheme, Button, Avatar } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import logo from '../images/logo.png'; 
-import Avatar from '@mui/material/Avatar';
+import logo from '../images/logo.png';
 
-const Navbar = () => {
-  const theme = useTheme(); // Używa hooka useTheme, aby uzyskać dostęp do motywu
+const Navbar = ({ onLogout }) => {
+  const theme = useTheme();
 
-  // Tutaj przykładowy URL zdjęcia zalogowanego użytkownika, w prawdziwej aplikacji 
-  // należy go odpowiednio dostosować do twojego przypadku użycia
   const userPhotoUrl = "https://example.com/path/to/user/photo.jpg";
 
   const activeStyle = {
@@ -36,8 +33,10 @@ const Navbar = () => {
           <NavLink to="/progress" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>Progress</NavLink>
         </div>
 
-        {/* Avatar użytkownika */}
-        <Avatar src={userPhotoUrl} alt="User Photo" sx={{ bgcolor: theme.palette.secondary.main }} />
+        <div>
+          <Avatar src={userPhotoUrl} alt="User Photo" sx={{ bgcolor: theme.palette.secondary.main, marginRight: 2 }} />
+          <Button color="inherit" onClick={onLogout}>Logout</Button>
+        </div>
       </Toolbar>
     </AppBar>
   );

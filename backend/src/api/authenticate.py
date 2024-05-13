@@ -10,7 +10,7 @@ class AuthDetails(BaseModel):
     password: str
 
 
-@router.post("/auth")  # Tutaj dodajesz ścieżkę i metodę HTTP
+@router.post("/auth")  
 async def authenticate(auth_details: AuthDetails, db: MongoDB = Depends(MongoDB)):
     user = await db.find_user(auth_details.username)
     if user and user['password'] == auth_details.password:
