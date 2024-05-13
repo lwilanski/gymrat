@@ -18,13 +18,13 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { useTheme } from '@mui/material/styles';
 
 function Exercises() {
-  const theme = useTheme();
   const [exercises, setExercises] = useState([]);
   const [openForm, setOpenForm] = useState(false);
-  const [newExercise, setNewExercise] = useState({
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentExercise, setCurrentExercise] = useState({
+    id: '',
     name: '',
     difficulty: '',
     body_part: '',
@@ -38,18 +38,19 @@ function Exercises() {
       .catch(error => console.error('Error:', error));
   }, []);
 
-
   const handleChange = (prop) => (event) => {
-    setNewExercise({ ...newExercise, [prop]: event.target.value });
+    setCurrentExercise({ ...currentExercise, [prop]: event.target.value });
   };
 
-  const handleSubmit = () => {
-    handleAdd(newExercise);
-    setOpenForm(false); 
-    setNewExercise({ name: '', difficulty: '', body_part: '', description: '' }); 
+  const openAddDialog = () => {
+    setIsEditing(false);
+    setCurrentExercise({ name: '', difficulty: '', body_part: '', description: '' });
+    setOpenForm(true);
   };
 
-  const handleAddDialog = () => {
+  const openEditDialog = (exercise) => {
+    setIsEditing(true);
+    setCurrentExercise(exercise);
     setOpenForm(true);
   };
 
@@ -57,7 +58,14 @@ function Exercises() {
     setOpenForm(false);
   };
 
-
+  const handleSubmit = () => {
+    if (isEditing) {
+      handleEdit(currentExercise.id, currentExercise);
+    } else {
+      handleAdd(currentExercise);
+    }
+    setOpenForm(false);
+  };
 
   const handleDelete = (exerciseId) => {
     fetch(`http://localhost:8000/exercises/${exerciseId}`, {
@@ -66,11 +74,10 @@ function Exercises() {
     .then(response => response.json())
     .then(data => {
       console.log('Delete response:', data);
-      setExercises(exercises.filter(ex => ex.id !== exerciseId)); // Remove the exercise from local state
+      setExercises(exercises.filter(ex => ex.id !== exerciseId));
     })
     .catch(error => console.error('Error:', error));
   };
-  
 
   const handleEdit = (exerciseId, updatedExercise) => {
     fetch(`http://localhost:8000/exercises/${exerciseId}`, {
@@ -83,12 +90,11 @@ function Exercises() {
     .then(response => response.json())
     .then(data => {
       console.log('Edit response:', data);
-      const updatedExercises = exercises.map(ex => ex.id === exerciseId ? {...ex, ...updatedExercise} : ex);
-      setExercises(updatedExercises); // Update the exercise in the local state
+      const updatedExercises = exercises.map(ex => ex.id === exerciseId ? {...ex, ...data} : ex);
+      setExercises(updatedExercises);
     })
     .catch(error => console.error('Error:', error));
   };
-  
 
   const handleAdd = (newExercise) => {
     fetch('http://localhost:8000/exercises', {
@@ -101,13 +107,12 @@ function Exercises() {
     .then(response => response.json())
     .then(data => {
       console.log('Success:', data);
-      setExercises([...exercises, data]); 
+      setExercises([...exercises, data]);
     })
     .catch((error) => {
       console.error('Error:', error);
     });
   };
-  
 
   return (
     <>
@@ -120,15 +125,15 @@ function Exercises() {
               <TableCell align="right">Body Part</TableCell>
               <TableCell align="right">Description</TableCell>
               <TableCell align="right">
-                <IconButton onClick={handleAddDialog}>
+                <IconButton onClick={openAddDialog}>
                   <AddBoxIcon />
                 </IconButton>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {exercises.map((exercise, index) => (
-              <TableRow key={index}>
+            {exercises.map((exercise) => (
+              <TableRow key={exercise.id}>
                 <TableCell component="th" scope="row">
                   {exercise.name}
                 </TableCell>
@@ -136,10 +141,10 @@ function Exercises() {
                 <TableCell align="right">{exercise.body_part}</TableCell>
                 <TableCell align="right">{exercise.description}</TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(exercise.id, exercise)}> {/* Updated to use ID */}
+                  <IconButton onClick={() => openEditDialog(exercise)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(exercise.id)}> {/* Updated to use ID */}
+                  <IconButton onClick={() => handleDelete(exercise.id)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -149,7 +154,7 @@ function Exercises() {
         </Table>
       </TableContainer>
       <Dialog open={openForm} onClose={handleClose}>
-        <DialogTitle>Add New Exercise</DialogTitle>
+        <DialogTitle>{isEditing ? 'Edit Exercise' : 'Add New Exercise'}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -158,7 +163,7 @@ function Exercises() {
             type="text"
             fullWidth
             variant="standard"
-            value={newExercise.name}
+            value={currentExercise.name}
             onChange={handleChange('name')}
           />
           <TextField
@@ -167,7 +172,7 @@ function Exercises() {
             type="text"
             fullWidth
             variant="standard"
-            value={newExercise.difficulty}
+            value={currentExercise.difficulty}
             onChange={handleChange('difficulty')}
           />
           <TextField
@@ -176,7 +181,7 @@ function Exercises() {
             type="text"
             fullWidth
             variant="standard"
-            value={newExercise.body_part}
+            value={currentExercise.body_part}
             onChange={handleChange('body_part')}
           />
           <TextField
@@ -185,13 +190,13 @@ function Exercises() {
             type="text"
             fullWidth
             variant="standard"
-            value={newExercise.description}
+            value={currentExercise.description}
             onChange={handleChange('description')}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add</Button>
+          <Button onClick={handleSubmit}>{isEditing ? 'Update' : 'Add'}</Button>
         </DialogActions>
       </Dialog>
     </>
