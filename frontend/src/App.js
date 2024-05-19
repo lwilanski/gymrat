@@ -32,7 +32,7 @@ function App() {
 
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('currentUser', username);  // Zapisz użytkownika do localStorage
+        localStorage.setItem('currentUser', username);
         setIsAuthenticated(true);
         setCurrentUser(username);
         console.log('Zalogowano pomyślnie:', data);
@@ -44,6 +44,32 @@ function App() {
       alert('Logowanie nieudane: ' + error.message);
     }
   };
+
+  const register = async (username, password) => {
+    try {
+      const response = await fetch('http://localhost:8000/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ _id: username, username, password })
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Rejestracja udana:', data);
+        return true;
+      } else {
+        throw new Error(data.detail || 'Nie można zarejestrować');
+      }
+    } catch (error) {
+      console.error('Błąd rejestracji:', error);
+      alert('Rejestracja nieudana: ' + error.message);
+      return false;
+    }
+  };
+  
 
   const logout = () => {
     localStorage.removeItem('currentUser');
@@ -64,7 +90,7 @@ function App() {
           </>
         ) : (
           <>
-            <Route path="/login" element={<LoginForm onLogin={login} />} />
+            <Route path="/login" element={<LoginForm onLogin={login} onRegister={register} />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </>
         )}
