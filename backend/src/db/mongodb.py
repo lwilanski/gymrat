@@ -57,3 +57,21 @@ class MongoDB:
     async def update_workout(self, workout_id, update_data):
         result = await self.db.workouts.update_one({"_id": workout_id}, {"$set": update_data})
         return result.modified_count > 0
+
+    async def add_calendar(self, calendar):
+        result = await self.db.calendars.insert_one(calendar)
+        return str(result.inserted_id)
+
+    async def get_calendar(self, user_id):
+        calendar = await self.db.calendars.find_one({"user_id": user_id})
+        if calendar:
+            calendar["id"] = str(calendar["_id"])
+        return calendar
+
+    async def update_calendar(self, calendar_id, update_data):
+        result = await self.db.calendars.update_one({"_id": calendar_id}, {"$set": update_data})
+        return result.modified_count > 0
+
+    async def delete_calendar(self, calendar_id):
+        result = await self.db.calendars.delete_one({"_id": calendar_id})
+        return result.deleted_count

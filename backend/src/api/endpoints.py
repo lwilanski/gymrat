@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List
 from ..db.mongodb import MongoDB
 from bson import ObjectId
+from datetime import datetime
 
 router = APIRouter()
 
@@ -37,6 +38,17 @@ class Workout(BaseModel):
         orm_mode = True
         allow_population_by_field_name = True
         json_encoders = {ObjectId: str}
+
+
+class CalendarWorkout(BaseModel):
+    workout_id: str
+    date: datetime
+
+
+class Calendar(BaseModel):
+    id: str = Field(..., alias="_id")
+    user_id: str
+    workouts: List[CalendarWorkout]
 
 
 class User(BaseModel):
@@ -90,12 +102,28 @@ async def get_workouts(db: MongoDB = Depends(get_db)):
     return workouts
 
 
+@router.get("/calendars/{user_id}", response_model=Calendar)
+async def get_calendar(user_id: str, db: MongoDB = Depends(get_db)):
+    calendar = await db.get_calendar(user_id)
+    if not calendar:
+        raise HTTPException(status_code=404, detail="Calendar not found")
+    return calendar
+
+
 @router.post("/workouts", response_model=Workout)
 async def add_workout(workout: Workout, db: MongoDB = Depends(get_db)):
     workout_dict = workout.dict(by_alias=True)
     workout_dict['_id'] = str(ObjectId())
     workout_id = await db.add_workout(workout_dict)
     return workout_dict
+
+
+@router.post("/calendars", response_model=Calendar)
+async def add_calendar(calendar: Calendar, db: MongoDB = Depends(get_db)):
+    calendar_dict = calendar.dict(by_alias=True)
+    calendar_dict['_id'] = str(ObjectId())
+    calendar_id = await db.add_calendar(calendar_dict)
+    return calendar_dict
 
 
 @router.delete("/workouts/{workout_id}", response_model=dict)
@@ -106,6 +134,14 @@ async def delete_workout(workout_id: str, db: MongoDB = Depends(get_db)):
     return {"message": "Workout deleted"}
 
 
+@router.delete("/calendars/{calendar_id}", response_model=dict)
+async def delete_calendar(calendar_id: str, db: MongoDB = Depends(get_db)):
+    deleted_count = await db.delete_calendar(calendar_id)
+    if deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Calendar not found")
+    return {"message": "Calendar deleted"}
+
+
 @router.put("/workouts/{workout_id}", response_model=Workout)
 async def update_workout(workout_id: str, workout: Workout, db: MongoDB = Depends(get_db)):
     workout_dict = workout.dict(by_alias=True)
@@ -113,6 +149,15 @@ async def update_workout(workout_id: str, workout: Workout, db: MongoDB = Depend
     if not updated:
         raise HTTPException(status_code=404, detail="Workout not found or not updated")
     return workout_dict
+
+
+@router.put("/calendars/{calendar_id}", response_model=Calendar)
+async def update_calendar(calendar_id: str, calendar: Calendar, db: MongoDB = Depends(get_db)):
+    calendar_dict = calendar.dict(by_alias=True)
+    updated = await db.update_calendar(calendar_id, calendar_dict)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Calendar not found or not updated")
+    return calendar_dict
 
 
 @router.post("/users", response_model=User)
