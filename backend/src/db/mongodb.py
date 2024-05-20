@@ -1,4 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
 import os
 
 
@@ -8,14 +9,13 @@ class MongoDB:
         self.db = self.client.gymrat
 
     async def add_exercise(self, exercise):
-        exercise['_id'] = exercise['id']
         result = await self.db.exercises.insert_one(exercise)
-        return exercise['id']
+        return str(result.inserted_id)
 
     async def get_exercises(self):
         cursor = self.db.exercises.find({})
         exercises = await cursor.to_list(length=100)
-        return [{**exercise, "id": str(exercise["_id"])} for exercise in exercises]
+        return exercises
 
     async def delete_exercise(self, exercise_id):
         result = await self.db.exercises.delete_one({"_id": exercise_id})

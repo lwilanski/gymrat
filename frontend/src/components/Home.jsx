@@ -15,9 +15,9 @@ function Home() {
         const nextIndex = (mottos.indexOf(prevMotto) + 1) % mottos.length;
         return mottos[nextIndex];
       });
-    }, 3000); // Zmienia motto co 3 sekundy
+    }, 3000);
 
-    return () => clearInterval(intervalId); // Czyszczenie interwału
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
