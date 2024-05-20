@@ -42,14 +42,13 @@ class MongoDB:
         return result.deleted_count
 
     async def add_workout(self, workout):
-        workout['_id'] = workout['id']
         result = await self.db.workouts.insert_one(workout)
-        return workout['id']
+        return str(result.inserted_id)
 
     async def get_workouts(self):
         cursor = self.db.workouts.find({})
         workouts = await cursor.to_list(length=100)
-        return [{**workout, "id": str(workout["_id"])} for workout in workouts]
+        return workouts
 
     async def delete_workout(self, workout_id):
         result = await self.db.workouts.delete_one({"_id": workout_id})

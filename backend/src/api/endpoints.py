@@ -28,13 +28,14 @@ class WorkoutExercise(BaseModel):
 
 
 class Workout(BaseModel):
-    id: str = Field(default_factory=lambda: str(ObjectId()))
+    id: str = Field(..., alias="_id")
     name: str
     user_id: str
     exercises: List[WorkoutExercise]
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
         json_encoders = {ObjectId: str}
 
 
@@ -83,18 +84,18 @@ async def update_exercise(exercise_id: str, exercise: Exercise, db: MongoDB = De
     return exercise_dict
 
 
-@router.post("/workouts", response_model=Workout)
-async def add_workout(workout: Workout, db: MongoDB = Depends(get_db)):
-    workout_dict = workout.dict()
-    workout_id = await db.add_workout(workout_dict)
-    workout.id = workout_id
-    return workout
-
-
 @router.get("/workouts", response_model=List[Workout])
 async def get_workouts(db: MongoDB = Depends(get_db)):
     workouts = await db.get_workouts()
     return workouts
+
+
+@router.post("/workouts", response_model=Workout)
+async def add_workout(workout: Workout, db: MongoDB = Depends(get_db)):
+    workout_dict = workout.dict(by_alias=True)
+    workout_dict['_id'] = str(ObjectId())
+    workout_id = await db.add_workout(workout_dict)
+    return workout_dict
 
 
 @router.delete("/workouts/{workout_id}", response_model=dict)
@@ -107,11 +108,11 @@ async def delete_workout(workout_id: str, db: MongoDB = Depends(get_db)):
 
 @router.put("/workouts/{workout_id}", response_model=Workout)
 async def update_workout(workout_id: str, workout: Workout, db: MongoDB = Depends(get_db)):
-    updated = await db.update_workout(workout_id, workout.dict())
+    workout_dict = workout.dict(by_alias=True)
+    updated = await db.update_workout(workout_id, workout_dict)
     if not updated:
         raise HTTPException(status_code=404, detail="Workout not found or not updated")
-    workout.id = workout_id
-    return workout
+    return workout_dict
 
 
 @router.post("/users", response_model=User)

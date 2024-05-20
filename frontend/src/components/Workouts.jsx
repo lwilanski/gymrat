@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 function Workouts() {
   const theme = useTheme();
   const [workoutPlan, setWorkoutPlan] = useState({
+    _id: '', // Dodane pole _id
     name: '',
     exercises: []
   });
@@ -48,13 +49,15 @@ function Workouts() {
   };
 
   const handleSavePlan = () => {
-    const user_id = localStorage.getItem('currentUser'); // Pobierz username z localStorage
+    const user_id = localStorage.getItem('currentUser');
     if (!user_id) {
         console.error('User not authenticated');
         return;
     }
 
     const workoutToSave = { ...workoutPlan, user_id };
+
+    console.log('Sending workout to save:', JSON.stringify(workoutToSave, null, 2)); // Logowanie wysyłanego JSON-a
 
     fetch('http://localhost:8000/workouts', {
         method: 'POST',
@@ -67,7 +70,7 @@ function Workouts() {
     .then(data => {
         console.log('Workout Plan saved:', data);
         setWorkouts([...workouts, data]);
-        setWorkoutPlan({ name: '', exercises: [] });
+        setWorkoutPlan({ _id: '', name: '', exercises: [] });
     })
     .catch(error => console.error('Error:', error));
   };
@@ -79,7 +82,7 @@ function Workouts() {
     .then(response => response.json())
     .then(data => {
       console.log('Delete response:', data);
-      setWorkouts(workouts.filter(workout => workout.id !== workoutId));
+      setWorkouts(workouts.filter(workout => workout._id !== workoutId));
     })
     .catch(error => console.error('Error:', error));
   };
@@ -91,7 +94,7 @@ function Workouts() {
   const handleUpdateWorkout = () => {
     const workoutToUpdate = { ...editingWorkout };
 
-    fetch(`http://localhost:8000/workouts/${workoutToUpdate.id}`, {
+    fetch(`http://localhost:8000/workouts/${workoutToUpdate._id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -101,7 +104,7 @@ function Workouts() {
     .then(response => response.json())
     .then(data => {
         console.log('Workout Plan updated:', data);
-        setWorkouts(workouts.map(workout => workout.id === data.id ? data : workout));
+        setWorkouts(workouts.map(workout => workout._id === data._id ? data : workout));
         setEditingWorkout(null);
     })
     .catch(error => console.error('Error:', error));
@@ -167,7 +170,7 @@ function Workouts() {
               onChange={e => handleExerciseChange(index, 'exercise_id', e.target.value)}
             >
               {availableExercises.map((ex, i) => (
-                <MenuItem key={i} value={ex.id}>{ex.name}</MenuItem>
+                <MenuItem key={i} value={ex._id}>{ex.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -204,14 +207,14 @@ function Workouts() {
             <Typography variant="subtitle2">Created by: {workout.user_id}</Typography>
             {workout.exercises.map((ex, i) => (
               <Typography key={i} variant="body2">
-                {availableExercises.find(e => e.id === ex.exercise_id)?.name} - {ex.reps} reps x {ex.sets} sets
+                {availableExercises.find(e => e._id === ex.exercise_id)?.name} - {ex.reps} reps x {ex.sets} sets
               </Typography>
             ))}
           </CardContent>
           {workout.user_id === currentUser && (
             <CardActions>
               <Button startIcon={<EditIcon />} onClick={() => handleEditWorkout(workout)}>Edit</Button>
-              <Button startIcon={<DeleteIcon />} onClick={() => handleDeleteWorkout(workout.id)} color="error">Delete</Button>
+              <Button startIcon={<DeleteIcon />} onClick={() => handleDeleteWorkout(workout._id)} color="error">Delete</Button>
             </CardActions>
           )}
         </Card>
@@ -240,7 +243,7 @@ function Workouts() {
                     onChange={e => handleEditExerciseChange(index, 'exercise_id', e.target.value)}
                   >
                     {availableExercises.map((ex, i) => (
-                      <MenuItem key={i} value={ex.id}>{ex.name}</MenuItem>
+                      <MenuItem key={i} value={ex._id}>{ex.name}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
