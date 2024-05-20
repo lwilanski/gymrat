@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List
 from ..db.mongodb import MongoDB
 from bson import ObjectId
+from datetime import date
 
 router = APIRouter()
 
@@ -126,3 +127,49 @@ async def add_user(user: User, db: MongoDB = Depends(get_db)):
 @router.get("/")
 async def read_root():
     return {"Hello": "World"}
+
+
+
+class WorkoutSchedule(BaseModel):
+    id: str = Field(default_factory=lambda: str(ObjectId()))
+    user_id: str
+    workout_id: str
+    date: date
+
+    class Config:
+        orm_mode = True
+        json_encoders = {ObjectId: str}
+
+
+
+@router.post("/workout-schedules", response_model=WorkoutSchedule)
+async def add_workout_schedule(workout_schedule: WorkoutSchedule, db: MongoDB = Depends(get_db)):
+    schedule_dict = workout_schedule.dict()
+    schedule_id = await db.add_workout_schedule(schedule_dict)
+    workout_schedule.id = schedule_id
+    return workout_schedule
+
+@router.get("/workout-schedules", response_model=List[WorkoutSchedule])
+async def get_workout_schedules(db: MongoDB = Depends(get_db)):
+    schedules = await db.get_workout_schedules()
+    return schedules
+
+@router.get("/workout-schedules/{user_id}", response_model=List[WorkoutSchedule])
+async def get_user_workout_schedules(user_id: str, db: MongoDB = Depends(get_db)):
+    schedules = await db.get_user_workout_schedules(user_id)
+    return schedules
+
+@router.delete("/workout-schedules/{schedule_id}", response_model=dict)
+async def delete_workout_schedule(schedule_id: str, db: MongoDB = Depends(get_db)):
+    deleted_count = await db.delete_workout_schedule(schedule_id)
+    if deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Workout schedule not found")
+    return {"message": "Workout schedule deleted"}
+
+@router.put("/workout-schedules/{schedule_id}", response_model=WorkoutSchedule)
+async def update_workout_schedule(schedule_id: str, workout_schedule: WorkoutSchedule, db: MongoDB = Depends(get_db)):
+    updated = await db.update_workout_schedule(schedule_id, workout_schedule.dict())
+    if not updated:
+        raise HTTPException(status_code=404, detail="Workout schedule not found or not updated")
+    workout_schedule.id = schedule_id
+    return workout_schedule

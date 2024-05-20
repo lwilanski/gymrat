@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Footer from './components/Footer';
 import Exercises from './components/Exercises';
 import Workouts from './components/Workouts';
+import WorkoutSchedules from './components/WorkoutSchedules';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -86,6 +87,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/exercises" element={<Exercises />} />
             <Route path="/workouts" element={<Workouts />} />
+            <Route path="/workout-schedules" element={<WorkoutSchedules />} />
             <Route path="*" element={<Navigate to="/" />} />
           </>
         ) : (

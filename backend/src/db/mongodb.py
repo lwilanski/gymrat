@@ -58,3 +58,23 @@ class MongoDB:
     async def update_workout(self, workout_id, update_data):
         result = await self.db.workouts.update_one({"_id": workout_id}, {"$set": update_data})
         return result.modified_count > 0
+
+    async def add_workout_schedule(self, schedule: dict):
+        result = await self.db["workout_schedules"].insert_one(schedule)
+        return str(result.inserted_id)
+
+    async def get_workout_schedules(self):
+        schedules = await self.db["workout_schedules"].find().to_list(length=None)
+        return schedules
+
+    async def get_user_workout_schedules(self, user_id: str):
+        schedules = await self.db["workout_schedules"].find({"user_id": user_id}).to_list(length=None)
+        return schedules
+
+    async def delete_workout_schedule(self, schedule_id: str):
+        result = await self.db["workout_schedules"].delete_one({"_id": ObjectId(schedule_id)})
+        return result.deleted_count
+
+    async def update_workout_schedule(self, schedule_id: str, schedule: dict):
+        result = await self.db["workout_schedules"].update_one({"_id": ObjectId(schedule_id)}, {"$set": schedule})
+        return result.modified_count > 0

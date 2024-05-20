@@ -31,6 +31,7 @@ app.include_router(exercises_router)
 app.include_router(auth_router)
 
 
+
 @app.on_event("startup")
 async def startup_event():
     print("Application start!")

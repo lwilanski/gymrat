@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Paper, Typography, Box, useTheme, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardActions, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Button, TextField, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardActions, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
 function Workouts() {
-  const theme = useTheme();
-  const [workoutPlan, setWorkoutPlan] = useState({
-    name: '',
-    exercises: []
-  });
+  const [workoutPlan, setWorkoutPlan] = useState({ name: '', exercises: [] });
   const [availableExercises, setAvailableExercises] = useState([]);
   const [workouts, setWorkouts] = useState([]);
   const [showOwnWorkouts, setShowOwnWorkouts] = useState(true);
@@ -50,38 +49,38 @@ function Workouts() {
   const handleSavePlan = () => {
     const user_id = localStorage.getItem('currentUser'); // Pobierz username z localStorage
     if (!user_id) {
-        console.error('User not authenticated');
-        return;
+      console.error('User not authenticated');
+      return;
     }
 
     const workoutToSave = { ...workoutPlan, user_id };
 
     fetch('http://localhost:8000/workouts', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(workoutToSave)
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(workoutToSave)
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         console.log('Workout Plan saved:', data);
         setWorkouts([...workouts, data]);
         setWorkoutPlan({ name: '', exercises: [] });
-    })
-    .catch(error => console.error('Error:', error));
+      })
+      .catch(error => console.error('Error:', error));
   };
 
   const handleDeleteWorkout = (workoutId) => {
     fetch(`http://localhost:8000/workouts/${workoutId}`, {
       method: 'DELETE'
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Delete response:', data);
-      setWorkouts(workouts.filter(workout => workout.id !== workoutId));
-    })
-    .catch(error => console.error('Error:', error));
+      .then(response => response.json())
+      .then(data => {
+        console.log('Delete response:', data);
+        setWorkouts(workouts.filter(workout => workout.id !== workoutId));
+      })
+      .catch(error => console.error('Error:', error));
   };
 
   const handleEditWorkout = (workout) => {
@@ -92,19 +91,19 @@ function Workouts() {
     const workoutToUpdate = { ...editingWorkout };
 
     fetch(`http://localhost:8000/workouts/${workoutToUpdate.id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(workoutToUpdate)
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(workoutToUpdate)
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         console.log('Workout Plan updated:', data);
         setWorkouts(workouts.map(workout => workout.id === data.id ? data : workout));
         setEditingWorkout(null);
-    })
-    .catch(error => console.error('Error:', error));
+      })
+      .catch(error => console.error('Error:', error));
   };
 
   const handleCancelEdit = () => {
@@ -146,76 +145,104 @@ function Workouts() {
   const filteredWorkouts = showOwnWorkouts ? workouts.filter(workout => workout.user_id === currentUser) : workouts;
 
   return (
-    <Paper elevation={3} sx={{ padding: 2 }}>
-      <Typography variant="h5" sx={{ marginBottom: 2 }}>Create Workout Plan</Typography>
-      <TextField
-        label="Plan Name"
-        variant="outlined"
-        fullWidth
-        value={workoutPlan.name}
-        onChange={e => setWorkoutPlan({ ...workoutPlan, name: e.target.value })}
-        sx={{ marginBottom: 2 }}
-      />
-      {workoutPlan.exercises.map((exercise, index) => (
-        <Box key={index} sx={{ marginBottom: 2 }}>
-          <FormControl fullWidth sx={{ marginRight: 1, marginBottom: 1 }}>
-            <InputLabel id={`exercise-label-${index}`}>Exercise Name</InputLabel>
-            <Select
-              labelId={`exercise-label-${index}`}
-              value={exercise.exercise_id}
-              label="Exercise Name"
-              onChange={e => handleExerciseChange(index, 'exercise_id', e.target.value)}
-            >
-              {availableExercises.map((ex, i) => (
-                <MenuItem key={i} value={ex.id}>{ex.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            label="Reps"
-            type="number"
-            variant="outlined"
-            value={exercise.reps}
-            onChange={e => handleExerciseChange(index, 'reps', e.target.value)}
-            sx={{ width: '100px', marginRight: 1 }}
-          />
-          <TextField
-            label="Sets"
-            type="number"
-            variant="outlined"
-            value={exercise.sets}
-            onChange={e => handleExerciseChange(index, 'sets', e.target.value)}
-            sx={{ width: '100px' }}
-          />
-        </Box>
-      ))}
-      <Button variant="contained" color="primary" onClick={handleAddExercise}>Add Exercise</Button>
-      <Button variant="contained" color="secondary" onClick={handleSavePlan} sx={{ float: 'right' }}>Save Plan</Button>
+    <Paper elevation={3} sx={{ padding: 3 }}>
+      <Typography variant="h4" sx={{ marginBottom: 3, textAlign: 'center' }}>Workout Plans</Typography>
+      <Box sx={{ marginBottom: 3 }}>
+        <Typography variant="h5" sx={{ marginBottom: 2 }}>Create Workout Plan</Typography>
+        <TextField
+          label="Plan Name"
+          variant="outlined"
+          fullWidth
+          value={workoutPlan.name}
+          onChange={e => setWorkoutPlan({ ...workoutPlan, name: e.target.value })}
+          sx={{ marginBottom: 2 }}
+        />
+        {workoutPlan.exercises.map((exercise, index) => (
+          <Grid container spacing={2} key={index} sx={{ marginBottom: 2 }}>
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth>
+                <InputLabel id={`exercise-label-${index}`}>Exercise</InputLabel>
+                <Select
+                  labelId={`exercise-label-${index}`}
+                  value={exercise.exercise_id}
+                  label="Exercise"
+                  onChange={e => handleExerciseChange(index, 'exercise_id', e.target.value)}
+                >
+                  {availableExercises.map((ex, i) => (
+                    <MenuItem key={i} value={ex.id}>{ex.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} sm={4}>
+              <TextField
+                label="Reps"
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={exercise.reps}
+                onChange={e => handleExerciseChange(index, 'reps', e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6} sm={4}>
+              <TextField
+                label="Sets"
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={exercise.sets}
+                onChange={e => handleExerciseChange(index, 'sets', e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        ))}
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddExercise} sx={{ marginBottom: 2 }}>Add Exercise</Button>
+        <Button variant="contained" color="primary" onClick={handleSavePlan} sx={{ float: 'right' }}>Save Plan</Button>
+      </Box>
 
-      <Typography variant="h6" sx={{ marginTop: 4 }}>Existing Workout Plans</Typography>
-      <Button variant="outlined" onClick={toggleShowOwnWorkouts} sx={{ marginBottom: 2 }}>
+      <Typography variant="h5" sx={{ marginBottom: 2 }}>Existing Workout Plans</Typography>
+      <Button variant="outlined" onClick={toggleShowOwnWorkouts} sx={{ marginBottom: 3 }}>
         {showOwnWorkouts ? "Show All Workouts" : "Show My Workouts"}
       </Button>
 
-      {filteredWorkouts.map((workout, index) => (
-        <Card key={index} sx={{ marginBottom: 2 }}>
-          <CardContent>
-            <Typography variant="h6">{workout.name}</Typography>
-            <Typography variant="subtitle2">Created by: {workout.user_id}</Typography>
-            {workout.exercises.map((ex, i) => (
-              <Typography key={i} variant="body2">
-                {availableExercises.find(e => e.id === ex.exercise_id)?.name} - {ex.reps} reps x {ex.sets} sets
-              </Typography>
-            ))}
-          </CardContent>
-          {workout.user_id === currentUser && (
-            <CardActions>
-              <Button startIcon={<EditIcon />} onClick={() => handleEditWorkout(workout)}>Edit</Button>
-              <Button startIcon={<DeleteIcon />} onClick={() => handleDeleteWorkout(workout.id)} color="error">Delete</Button>
-            </CardActions>
-          )}
-        </Card>
-      ))}
+      <Grid container spacing={3}>
+        {filteredWorkouts.map((workout, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">{workout.name}</Typography>
+                <Typography variant="subtitle2" color="textSecondary">Created by: {workout.user_id}</Typography>
+                <TableContainer>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Exercise</TableCell>
+                        <TableCell>Reps</TableCell>
+                        <TableCell>Sets</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {workout.exercises.map((ex, i) => (
+                        <TableRow key={i}>
+                          <TableCell>{availableExercises.find(e => e.id === ex.exercise_id)?.name}</TableCell>
+                          <TableCell>{ex.reps}</TableCell>
+                          <TableCell>{ex.sets}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+              {workout.user_id === currentUser && (
+                <CardActions>
+                  <Button startIcon={<EditIcon />} onClick={() => handleEditWorkout(workout)}>Edit</Button>
+                  <Button startIcon={<DeleteIcon />} onClick={() => handleDeleteWorkout(workout.id)} color="error">Delete</Button>
+                </CardActions>
+              )}
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
       {editingWorkout && (
         <Dialog open={true} onClose={handleCancelEdit}>
@@ -230,38 +257,46 @@ function Workouts() {
               sx={{ marginBottom: 2 }}
             />
             {editingWorkout.exercises.map((exercise, index) => (
-              <Box key={index} sx={{ marginBottom: 2 }}>
-                <FormControl fullWidth sx={{ marginRight: 1, marginBottom: 1 }}>
-                  <InputLabel id={`edit-exercise-label-${index}`}>Exercise Name</InputLabel>
-                  <Select
-                    labelId={`edit-exercise-label-${index}`}
-                    value={exercise.exercise_id}
-                    label="Exercise Name"
-                    onChange={e => handleEditExerciseChange(index, 'exercise_id', e.target.value)}
-                  >
-                    {availableExercises.map((ex, i) => (
-                      <MenuItem key={i} value={ex.id}>{ex.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <TextField
-                  label="Reps"
-                  type="number"
-                  variant="outlined"
-                  value={exercise.reps}
-                  onChange={e => handleEditExerciseChange(index, 'reps', e.target.value)}
-                  sx={{ width: '100px', marginRight: 1 }}
-                />
-                <TextField
-                  label="Sets"
-                  type="number"
-                  variant="outlined"
-                  value={exercise.sets}
-                  onChange={e => handleEditExerciseChange(index, 'sets', e.target.value)}
-                  sx={{ width: '100px' }}
-                />
-                <Button onClick={() => handleRemoveExerciseFromEdit(index)} color="error">Remove</Button>
-              </Box>
+              <Grid container spacing={2} key={index} sx={{ marginBottom: 2 }}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel id={`edit-exercise-label-${index}`}>Exercise</InputLabel>
+                    <Select
+                      labelId={`edit-exercise-label-${index}`}
+                      value={exercise.exercise_id}
+                      label="Exercise"
+                      onChange={e => handleEditExerciseChange(index, 'exercise_id', e.target.value)}
+                    >
+                      {availableExercises.map((ex, i) => (
+                        <MenuItem key={i} value={ex.id}>{ex.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6} sm={4}>
+                  <TextField
+                    label="Reps"
+                    type="number"
+                    variant="outlined"
+                    fullWidth
+                    value={exercise.reps}
+                    onChange={e => handleEditExerciseChange(index, 'reps', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={4}>
+                  <TextField
+                    label="Sets"
+                    type="number"
+                    variant="outlined"
+                    fullWidth
+                    value={exercise.sets}
+                    onChange={e => handleEditExerciseChange(index, 'sets', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button onClick={() => handleRemoveExerciseFromEdit(index)} color="error">Remove</Button>
+                </Grid>
+              </Grid>
             ))}
             <Button variant="contained" onClick={handleAddExerciseToEdit}>Add Exercise</Button>
           </DialogContent>

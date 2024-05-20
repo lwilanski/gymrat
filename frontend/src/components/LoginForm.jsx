@@ -1,5 +1,26 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, TextField, Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Paper } from '@mui/material';
+import styled from 'styled-components';
+import backgroundImg from '../images/gym.jpeg'; // Import the image
+
+const Background = styled.div`
+  background-image: url(${backgroundImg});
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const FormContainer = styled(Paper)`
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
+`;
 
 function LoginForm({ onLogin, onRegister }) {
   const [username, setUsername] = useState('');
@@ -27,43 +48,44 @@ function LoginForm({ onLogin, onRegister }) {
   };
 
   return (
-    <>
-      <Box
-        component="form"
-        sx={{
-          '& .MuiTextField-root': { m: 1, width: '25ch' },
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-        noValidate
-        autoComplete="off"
-        onSubmit={handleSubmit}
-      >
-        <Typography component="h1" variant="h5">
-          Logowanie
-        </Typography>
-        <TextField
-          required
-          label="Nazwa użytkownika"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
-        <TextField
-          required
-          label="Hasło"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
-          Zaloguj się
-        </Button>
-        <Button variant="outlined" onClick={() => setIsRegisterOpen(true)}>
-          Zarejestruj się
-        </Button>
-      </Box>
+    <Background>
+      <FormContainer elevation={6}>
+        <Box
+          component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '100%' },
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+          noValidate
+          autoComplete="off"
+          onSubmit={handleSubmit}
+        >
+          <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
+            Logowanie
+          </Typography>
+          <TextField
+            required
+            label="Nazwa użytkownika"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          />
+          <TextField
+            required
+            label="Hasło"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+            Zaloguj się
+          </Button>
+          <Button variant="outlined" onClick={() => setIsRegisterOpen(true)}>
+            Zarejestruj się
+          </Button>
+        </Box>
+      </FormContainer>
       <Dialog open={isRegisterOpen} onClose={() => setIsRegisterOpen(false)}>
         <DialogTitle>Rejestracja</DialogTitle>
         <DialogContent>
@@ -97,7 +119,7 @@ function LoginForm({ onLogin, onRegister }) {
           <Button onClick={handleRegisterSubmit} variant="contained">Zarejestruj się</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Background>
   );
 }
 
