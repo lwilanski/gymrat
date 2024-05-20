@@ -1,12 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Paper, Typography, Box, useTheme, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardActions, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Button, TextField, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardActions, Dialog, DialogTitle, DialogContent, DialogActions, useTheme, Grid } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import styled from 'styled-components';
+import backgroundImg from '../images/gym.jpeg'; // Replace with your background image path
 
-function Workouts() {
+const Background = styled.div`
+  background-image: url(${backgroundImg});
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Adjust the overlay opacity */
+  z-index: 1;
+`;
+
+const Content = styled.div`
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const FormContainer = styled(Paper)`
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  width: 100%;
+  margin: 2rem 0;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9); /* Make the form container semi-transparent */
+`;
+
+const StyledCard = styled(Card)`
+  margin-bottom: 2rem;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+`;
+
+const Workouts = () => {
   const theme = useTheme();
   const [workoutPlan, setWorkoutPlan] = useState({
-    _id: '', // Dodane pole _id
+    _id: '',
     name: '',
     exercises: []
   });
@@ -57,7 +110,7 @@ function Workouts() {
 
     const workoutToSave = { ...workoutPlan, user_id };
 
-    console.log('Sending workout to save:', JSON.stringify(workoutToSave, null, 2)); // Logowanie wysyłanego JSON-a
+    console.log('Sending workout to save:', JSON.stringify(workoutToSave, null, 2));
 
     fetch('http://localhost:8000/workouts', {
         method: 'POST',
@@ -149,132 +202,141 @@ function Workouts() {
   const filteredWorkouts = showOwnWorkouts ? workouts.filter(workout => workout.user_id === currentUser) : workouts;
 
   return (
-    <Paper elevation={3} sx={{ padding: 2 }}>
-      <Typography variant="h5" sx={{ marginBottom: 2 }}>Create Workout Plan</Typography>
-      <TextField
-        label="Plan Name"
-        variant="outlined"
-        fullWidth
-        value={workoutPlan.name}
-        onChange={e => setWorkoutPlan({ ...workoutPlan, name: e.target.value })}
-        sx={{ marginBottom: 2 }}
-      />
-      {workoutPlan.exercises.map((exercise, index) => (
-        <Box key={index} sx={{ marginBottom: 2 }}>
-          <FormControl fullWidth sx={{ marginRight: 1, marginBottom: 1 }}>
-            <InputLabel id={`exercise-label-${index}`}>Exercise Name</InputLabel>
-            <Select
-              labelId={`exercise-label-${index}`}
-              value={exercise.exercise_id}
-              label="Exercise Name"
-              onChange={e => handleExerciseChange(index, 'exercise_id', e.target.value)}
-            >
-              {availableExercises.map((ex, i) => (
-                <MenuItem key={i} value={ex._id}>{ex.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+    <Background>
+      <Overlay />
+      <Content>
+        <FormContainer elevation={3}>
+          <Typography variant="h5" sx={{ marginBottom: 2 }}>Create Workout Plan</Typography>
           <TextField
-            label="Reps"
-            type="number"
+            label="Plan Name"
             variant="outlined"
-            value={exercise.reps}
-            onChange={e => handleExerciseChange(index, 'reps', e.target.value)}
-            sx={{ width: '100px', marginRight: 1 }}
+            fullWidth
+            value={workoutPlan.name}
+            onChange={e => setWorkoutPlan({ ...workoutPlan, name: e.target.value })}
+            sx={{ marginBottom: 2 }}
           />
-          <TextField
-            label="Sets"
-            type="number"
-            variant="outlined"
-            value={exercise.sets}
-            onChange={e => handleExerciseChange(index, 'sets', e.target.value)}
-            sx={{ width: '100px' }}
-          />
-        </Box>
-      ))}
-      <Button variant="contained" color="primary" onClick={handleAddExercise}>Add Exercise</Button>
-      <Button variant="contained" color="secondary" onClick={handleSavePlan} sx={{ float: 'right' }}>Save Plan</Button>
+          {workoutPlan.exercises.map((exercise, index) => (
+            <Box key={index} sx={{ marginBottom: 2, display: 'flex', gap: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel id={`exercise-label-${index}`}>Exercise Name</InputLabel>
+                <Select
+                  labelId={`exercise-label-${index}`}
+                  value={exercise.exercise_id}
+                  label="Exercise Name"
+                  onChange={e => handleExerciseChange(index, 'exercise_id', e.target.value)}
+                >
+                  {availableExercises.map((ex, i) => (
+                    <MenuItem key={i} value={ex._id}>{ex.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Reps"
+                type="number"
+                variant="outlined"
+                value={exercise.reps}
+                onChange={e => handleExerciseChange(index, 'reps', e.target.value)}
+                sx={{ width: '100px' }}
+              />
+              <TextField
+                label="Sets"
+                type="number"
+                variant="outlined"
+                value={exercise.sets}
+                onChange={e => handleExerciseChange(index, 'sets', e.target.value)}
+                sx={{ width: '100px' }}
+              />
+            </Box>
+          ))}
+          <Button variant="contained" color="primary" onClick={handleAddExercise} sx={{ mb: 2 }}>Add Exercise</Button>
+          <Button variant="contained" color="secondary" onClick={handleSavePlan} sx={{ mb: 2 }}>Save Plan</Button>
 
-      <Typography variant="h6" sx={{ marginTop: 4 }}>Existing Workout Plans</Typography>
-      <Button variant="outlined" onClick={toggleShowOwnWorkouts} sx={{ marginBottom: 2 }}>
-        {showOwnWorkouts ? "Show All Workouts" : "Show My Workouts"}
-      </Button>
+          <Typography variant="h6" sx={{ marginTop: 4 }}>Existing Workout Plans</Typography>
+          <Button variant="outlined" onClick={toggleShowOwnWorkouts} sx={{ marginBottom: 2 }}>
+            {showOwnWorkouts ? "Show All Workouts" : "Show My Workouts"}
+          </Button>
 
-      {filteredWorkouts.map((workout, index) => (
-        <Card key={index} sx={{ marginBottom: 2 }}>
-          <CardContent>
-            <Typography variant="h6">{workout.name}</Typography>
-            <Typography variant="subtitle2">Created by: {workout.user_id}</Typography>
-            {workout.exercises.map((ex, i) => (
-              <Typography key={i} variant="body2">
-                {availableExercises.find(e => e._id === ex.exercise_id)?.name} - {ex.reps} reps x {ex.sets} sets
-              </Typography>
-            ))}
-          </CardContent>
-          {workout.user_id === currentUser && (
-            <CardActions>
-              <Button startIcon={<EditIcon />} onClick={() => handleEditWorkout(workout)}>Edit</Button>
-              <Button startIcon={<DeleteIcon />} onClick={() => handleDeleteWorkout(workout._id)} color="error">Delete</Button>
-            </CardActions>
-          )}
-        </Card>
-      ))}
-
-      {editingWorkout && (
-        <Dialog open={true} onClose={handleCancelEdit}>
-          <DialogTitle>Edit Workout</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Plan Name"
-              variant="outlined"
-              fullWidth
-              value={editingWorkout.name}
-              onChange={e => setEditingWorkout({ ...editingWorkout, name: e.target.value })}
-              sx={{ marginBottom: 2 }}
-            />
-            {editingWorkout.exercises.map((exercise, index) => (
-              <Box key={index} sx={{ marginBottom: 2 }}>
-                <FormControl fullWidth sx={{ marginRight: 1, marginBottom: 1 }}>
-                  <InputLabel id={`edit-exercise-label-${index}`}>Exercise Name</InputLabel>
-                  <Select
-                    labelId={`edit-exercise-label-${index}`}
-                    value={exercise.exercise_id}
-                    label="Exercise Name"
-                    onChange={e => handleEditExerciseChange(index, 'exercise_id', e.target.value)}
-                  >
-                    {availableExercises.map((ex, i) => (
-                      <MenuItem key={i} value={ex._id}>{ex.name}</MenuItem>
+          <Grid container spacing={3}>
+            {filteredWorkouts.map((workout, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <StyledCard>
+                  <CardContent>
+                    <Typography variant="h6">{workout.name}</Typography>
+                    <Typography variant="subtitle2">Created by: {workout.user_id}</Typography>
+                    {workout.exercises.map((ex, i) => (
+                      <Typography key={i} variant="body2">
+                        {availableExercises.find(e => e._id === ex.exercise_id)?.name} - {ex.reps} reps x {ex.sets} sets
+                      </Typography>
                     ))}
-                  </Select>
-                </FormControl>
-                <TextField
-                  label="Reps"
-                  type="number"
-                  variant="outlined"
-                  value={exercise.reps}
-                  onChange={e => handleEditExerciseChange(index, 'reps', e.target.value)}
-                  sx={{ width: '100px', marginRight: 1 }}
-                />
-                <TextField
-                  label="Sets"
-                  type="number"
-                  variant="outlined"
-                  value={exercise.sets}
-                  onChange={e => handleEditExerciseChange(index, 'sets', e.target.value)}
-                  sx={{ width: '100px' }}
-                />
-                <Button onClick={() => handleRemoveExerciseFromEdit(index)} color="error">Remove</Button>
-              </Box>
+                  </CardContent>
+                  {workout.user_id === currentUser && (
+                    <CardActions>
+                      <Button startIcon={<EditIcon />} onClick={() => handleEditWorkout(workout)}>Edit</Button>
+                      <Button startIcon={<DeleteIcon />} onClick={() => handleDeleteWorkout(workout._id)} color="error">Delete</Button>
+                    </CardActions>
+                  )}
+                </StyledCard>
+              </Grid>
             ))}
-            <Button variant="contained" onClick={handleAddExerciseToEdit}>Add Exercise</Button>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCancelEdit}>Cancel</Button>
-            <Button onClick={handleUpdateWorkout} color="primary">Update Workout</Button>
-          </DialogActions>
-        </Dialog>
-      )}
-    </Paper>
+          </Grid>
+
+          {editingWorkout && (
+            <Dialog open={true} onClose={handleCancelEdit}>
+              <DialogTitle>Edit Workout</DialogTitle>
+              <DialogContent>
+                <TextField
+                  label="Plan Name"
+                  variant="outlined"
+                  fullWidth
+                  value={editingWorkout.name}
+                  onChange={e => setEditingWorkout({ ...editingWorkout, name: e.target.value })}
+                  sx={{ marginBottom: 2 }}
+                />
+                {editingWorkout.exercises.map((exercise, index) => (
+                  <Box key={index} sx={{ marginBottom: 2, display: 'flex', gap: 2 }}>
+                    <FormControl fullWidth>
+                      <InputLabel id={`edit-exercise-label-${index}`}>Exercise Name</InputLabel>
+                      <Select
+                        labelId={`edit-exercise-label-${index}`}
+                        value={exercise.exercise_id}
+                        label="Exercise Name"
+                        onChange={e => handleEditExerciseChange(index, 'exercise_id', e.target.value)}
+                      >
+                        {availableExercises.map((ex, i) => (
+                          <MenuItem key={i} value={ex._id}>{ex.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      label="Reps"
+                      type="number"
+                      variant="outlined"
+                      value={exercise.reps}
+                      onChange={e => handleEditExerciseChange(index, 'reps', e.target.value)}
+                      sx={{ width: '100px' }}
+                    />
+                    <TextField
+                      label="Sets"
+                      type="number"
+                      variant="outlined"
+                      value={exercise.sets}
+                      onChange={e => handleEditExerciseChange(index, 'sets', e.target.value)}
+                      sx={{ width: '100px' }}
+                    />
+                    <Button onClick={() => handleRemoveExerciseFromEdit(index)} color="error">Remove</Button>
+                  </Box>
+                ))}
+                <Button variant="contained" onClick={handleAddExerciseToEdit}>Add Exercise</Button>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCancelEdit}>Cancel</Button>
+                <Button onClick={handleUpdateWorkout} color="primary">Update Workout</Button>
+              </DialogActions>
+            </Dialog>
+          )}
+        </FormContainer>
+      </Content>
+    </Background>
   );
 }
 

@@ -3,7 +3,47 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import styled from 'styled-components';
 import background from '../images/background.jpg';
+
+const Background = styled.div`
+  background-image: url(${background});
+  background-size: cover;
+  background-position: center;
+  min-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: white;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+`;
+
+const Content = styled(Box)`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const AnimatedMotto = styled(Typography)`
+  animation: fade-in 3s infinite;
+  @keyframes fade-in {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+`;
 
 function Home() {
   const [motto, setMotto] = useState("Be Stronger");
@@ -21,35 +61,17 @@ function Home() {
   }, []);
 
   return (
-    <Container maxWidth="x1"
-    sx={{ 
-      backgroundImage: `url(${background})`,
-      minHeight: '90vh',
-      backgroundSize: 'cover',
-     }}>
-      <Box 
-      sx={{ 
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-
-       }}>
-        <Typography variant="h4" component="h1" gutterBottom color="secondary">
-          Welcome to the GymRat
+    <Background>
+      <Overlay />
+      <Content>
+        <Typography variant="h2" component="h1" gutterBottom color="secondary" sx={{ fontWeight: 'bold' }}>
+          Welcome to GymRat
         </Typography>
-  
-        <Typography variant="h5" gutterBottom color="secondary">
-          {motto === "Be a GymRat" ? (
-            <span>
-              {"Be a "}
-              
-            </span>
-          ) : (
-            motto
-          )}
-        </Typography>
-      </Box>
-    </Container>
+        <AnimatedMotto variant="h4" gutterBottom color="secondary">
+          {motto}
+        </AnimatedMotto>
+      </Content>
+    </Background>
   );
 }
 
