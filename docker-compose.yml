@@ -11,15 +11,11 @@ services:
       - MONGO_URI=mongodb://mongo:27017/gymrat
     depends_on:
       - mongo
-    volumes:
-      - ./backend:/app  # Mapiowanie lokalnego katalogu backendu do /app w kontenerze
 
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app  # Mapiowanie lokalnego katalogu frontendu do /app w kontenerze
 
   mongo:
     image: mongo:latest
