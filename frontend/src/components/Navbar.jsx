@@ -30,7 +30,7 @@ const Navbar = ({ onLogout }) => {
           <NavLink to="/" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>Home</NavLink>
           <NavLink to="/workouts" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>My Workouts</NavLink>
           <NavLink to="/exercises" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>Exercises</NavLink>
-          <NavLink to="/progress" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>Progress</NavLink>
+          <NavLink to="/calendar" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>Calendar</NavLink>
         </div>
 
         <div>
