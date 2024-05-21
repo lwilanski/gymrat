@@ -15,11 +15,11 @@ const theme = createTheme({
       default: '#f4f4f4',
     },
     text: {
-      primary: '#000000', // Główny kolor tekstu
+      primary: '#000000', 
       secondary: '#fdc705', 
-      third: '#FFFFFF' ,// Drugorzędny kolor tekstu
-      disabled:'#9e9e9e', // Kolor dla nieaktywnego tekstu
-      hint: '#bdbdbd', // Kolor dla tekstu typu 'podpowiedź'
+      third: '#FFFFFF' ,
+      disabled:'#9e9e9e', 
+      hint: '#bdbdbd', 
     },
   },
   typography: {
@@ -27,9 +27,8 @@ const theme = createTheme({
     h5: {
       fontWeight: 600,
     },
-    // Możesz tutaj dodać więcej stylów typograficznych
   },
-  // Możesz również dodać inne globalne style
+ 
 });
 
 export default theme;

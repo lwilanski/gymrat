@@ -12,8 +12,8 @@ const Footer = () => {
                 py: 3,
                 px: 2,
                 mt: 'auto',
-                backgroundColor: 'primary.main', // Ustawienie koloru tła na kolor główny motywu
-                color: 'white', // Ustawienie koloru tekstu na biały dla kontrastu
+                backgroundColor: 'primary.main', 
+                color: 'white', 
             }}
         >
             <Container maxWidth="lg">

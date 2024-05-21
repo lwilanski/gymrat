@@ -3,7 +3,7 @@ import { Button, TextField, Paper, Typography, Box, Select, MenuItem, FormContro
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import styled from 'styled-components';
-import backgroundImg from '../images/gym.jpeg'; // Replace with your background image path
+import backgroundImg from '../images/gym.jpeg'; 
 
 const Background = styled.div`
   background-image: url(${backgroundImg});
