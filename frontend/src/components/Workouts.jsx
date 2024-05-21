@@ -84,14 +84,15 @@ const Workouts = () => {
   const handleAddExercise = () => {
     setWorkoutPlan(prev => ({
       ...prev,
-      exercises: [...prev.exercises, { exercise_id: '', reps: 0, sets: 0 }]
+      exercises: [...prev.exercises, { exercise_id: '', reps: 1, sets: 1 }]
     }));
   };
 
   const handleExerciseChange = (index, field, value) => {
+    const newValue = field === 'reps' || field === 'sets' ? Math.max(1, value) : value;
     const newExercises = workoutPlan.exercises.map((item, i) => {
       if (i === index) {
-        return { ...item, [field]: value };
+        return { ...item, [field]: newValue };
       }
       return item;
     });
@@ -172,9 +173,10 @@ const Workouts = () => {
   };
 
   const handleEditExerciseChange = (index, field, value) => {
+    const newValue = field === 'reps' || field === 'sets' ? Math.max(1, value) : value;
     const newExercises = editingWorkout.exercises.map((item, i) => {
       if (i === index) {
-        return { ...item, [field]: value };
+        return { ...item, [field]: newValue };
       }
       return item;
     });
@@ -187,7 +189,7 @@ const Workouts = () => {
   const handleAddExerciseToEdit = () => {
     setEditingWorkout(prev => ({
       ...prev,
-      exercises: [...prev.exercises, { exercise_id: '', reps: 0, sets: 0 }]
+      exercises: [...prev.exercises, { exercise_id: '', reps: 1, sets: 1 }]
     }));
   };
 
@@ -235,16 +237,18 @@ const Workouts = () => {
                 type="number"
                 variant="outlined"
                 value={exercise.reps}
-                onChange={e => handleExerciseChange(index, 'reps', e.target.value)}
+                onChange={e => handleExerciseChange(index, 'reps', Math.max(1, e.target.value))}
                 sx={{ width: '100px' }}
+                inputProps={{ min: 1 }}
               />
               <TextField
                 label="Sets"
                 type="number"
                 variant="outlined"
                 value={exercise.sets}
-                onChange={e => handleExerciseChange(index, 'sets', e.target.value)}
+                onChange={e => handleExerciseChange(index, 'sets', Math.max(1, e.target.value))}
                 sx={{ width: '100px' }}
+                inputProps={{ min: 1 }}
               />
             </Box>
           ))}
@@ -312,16 +316,18 @@ const Workouts = () => {
                       type="number"
                       variant="outlined"
                       value={exercise.reps}
-                      onChange={e => handleEditExerciseChange(index, 'reps', e.target.value)}
+                      onChange={e => handleEditExerciseChange(index, 'reps', Math.max(1, e.target.value))}
                       sx={{ width: '100px' }}
+                      inputProps={{ min: 1 }}
                     />
                     <TextField
                       label="Sets"
                       type="number"
                       variant="outlined"
                       value={exercise.sets}
-                      onChange={e => handleEditExerciseChange(index, 'sets', e.target.value)}
+                      onChange={e => handleEditExerciseChange(index, 'sets', Math.max(1, e.target.value))}
                       sx={{ width: '100px' }}
+                      inputProps={{ min: 1 }}
                     />
                     <Button onClick={() => handleRemoveExerciseFromEdit(index)} color="error">Remove</Button>
                   </Box>
