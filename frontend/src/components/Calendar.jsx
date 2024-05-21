@@ -57,11 +57,7 @@ const StyledCard = styled(Card)`
 
 const Calendar = () => {
   const theme = useTheme();
-  const [calendar, setCalendar] = useState({
-    _id: '',
-    user_id: '',
-    workouts: []
-  });
+  const [calendar, setCalendar] = useState(null);
   const [workouts, setWorkouts] = useState([]);
   const [selectedWorkout, setSelectedWorkout] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
@@ -85,11 +81,44 @@ const Calendar = () => {
   const fetchCalendar = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/calendars/${currentUser}`);
-      setCalendar(response.data || { _id: '', user_id: currentUser, workouts: [] });
+      setCalendar(response.data || null);
     } catch (error) {
       console.error('Error fetching calendar:', error);
     }
   };
+
+  const handleCreateCalendar = async () => {
+    const newCalendar = {
+      _id: '',
+      user_id: currentUser,
+      workouts: []
+    };
+
+    console.log('Sending new calendar:', JSON.stringify(newCalendar, null, 2));
+
+    try {
+      const response = await axios.post('http://localhost:8000/calendars', newCalendar);
+      setCalendar(response.data);
+    } catch (error) {
+      console.error('Error creating calendar:', error);
+    }
+  };
+
+  const handleRemoveWorkout = async (workout_id, date) => {
+    try {
+      const payload = {
+        workout_id,
+        date: date
+      };
+      console.log('Sending payload to remove workout from calendar:', JSON.stringify(payload, null, 2));
+  
+      await axios.put(`http://localhost:8000/calendars/${calendar._id}/workouts/remove`, payload);
+      fetchCalendar();
+    } catch (error) {
+      console.error('Error removing workout from calendar:', error);
+    }
+  };  
+  
 
   const handleScheduleWorkout = async () => {
     if (!selectedWorkout || !selectedDate) {
@@ -108,7 +137,7 @@ const Calendar = () => {
     };
 
     try {
-      await axios.post('http://localhost:8000/calendars', updatedCalendar);
+      await axios.put(`http://localhost:8000/calendars/${calendar._id}`, updatedCalendar);
       setSelectedWorkout('');
       setSelectedDate('');
       setOpenForm(false);
@@ -132,23 +161,36 @@ const Calendar = () => {
       <Content>
         <FormContainer elevation={3}>
           <Typography variant="h5" sx={{ marginBottom: 2 }}>Calendar</Typography>
-          <Button variant="contained" onClick={openAddDialog}>Schedule Workout</Button>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            {calendar.workouts.map((entry, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <StyledCard>
-                  <CardContent>
-                    <Typography variant="h6">
-                      {workouts.find(workout => workout._id === entry.workout_id)?.name}
-                    </Typography>
-                    <Typography variant="subtitle2">
-                      {new Date(entry.date).toLocaleDateString()}
-                    </Typography>
-                  </CardContent>
-                </StyledCard>
+          {calendar ? (
+            <>
+              <Button variant="contained" onClick={openAddDialog}>Schedule Workout</Button>
+              <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                {calendar.workouts.map((entry, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <StyledCard>
+                      <CardContent>
+                        <Typography variant="h6">
+                          {workouts.find(workout => workout._id === entry.workout_id)?.name}
+                        </Typography>
+                        <Typography variant="subtitle2">
+                          {new Date(entry.date).toLocaleDateString()}
+                        </Typography>
+                        <Button 
+                          variant="contained" 
+                          color="secondary" 
+                          onClick={() => handleRemoveWorkout(entry.workout_id, entry.date)}
+                        >
+                          Remove
+                        </Button>
+                      </CardContent>
+                    </StyledCard>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </>
+          ) : (
+            <Button variant="contained" onClick={handleCreateCalendar}>Create Calendar</Button>
+          )}
           <Dialog open={openForm} onClose={handleClose}>
             <DialogTitle>Schedule Workout</DialogTitle>
             <DialogContent>
@@ -186,6 +228,7 @@ const Calendar = () => {
         </FormContainer>
       </Content>
     </Background>
+
   );
 }
 

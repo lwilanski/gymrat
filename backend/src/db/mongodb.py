@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 import os
+from datetime import datetime
 
 
 class MongoDB:
@@ -62,10 +63,12 @@ class MongoDB:
         result = await self.db.calendars.insert_one(calendar)
         return str(result.inserted_id)
 
-    async def get_calendar(self, user_id):
+    async def get_calendar(self, calendar_id):
+        calendar = await self.db.calendars.find_one({"_id": calendar_id})
+        return calendar
+
+    async def get_calendar_by_user(self, user_id):
         calendar = await self.db.calendars.find_one({"user_id": user_id})
-        if calendar:
-            calendar["id"] = str(calendar["_id"])
         return calendar
 
     async def update_calendar(self, calendar_id, update_data):
@@ -75,3 +78,10 @@ class MongoDB:
     async def delete_calendar(self, calendar_id):
         result = await self.db.calendars.delete_one({"_id": calendar_id})
         return result.deleted_count
+
+    async def remove_workout_from_calendar(self, calendar_id, workout_id, date: datetime):
+        result = await self.db.calendars.update_one(
+            {"_id": calendar_id},
+            {"$pull": {"workouts": {"workout_id": workout_id, "date": date}}}
+        )
+        return result.modified_count > 0
