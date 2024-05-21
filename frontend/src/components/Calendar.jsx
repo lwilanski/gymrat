@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardActions, Dialog, DialogTitle, DialogContent, DialogActions, useTheme, Grid } from '@mui/material';
+import { Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Dialog, DialogTitle, DialogContent, DialogActions, useTheme, Box } from '@mui/material';
 import styled from 'styled-components';
 import axios from 'axios';
+import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay, addDays } from 'date-fns';
+import enUS from 'date-fns/locale/en-US';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import backgroundImg from '../images/gym.jpeg';
+
+const locales = {
+  'en-US': enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
+  getDay,
+  locales,
+});
 
 const Background = styled.div`
   background-image: url(${backgroundImg});
@@ -36,7 +52,7 @@ const Content = styled.div`
   align-items: center;
 `;
 
-const FormContainer = styled(Paper)`
+const FormContainer = styled.div`
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -49,23 +65,21 @@ const FormContainer = styled(Paper)`
   background: rgba(255, 255, 255, 0.9);
 `;
 
-const StyledCard = styled(Card)`
-  margin-bottom: 2rem;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-`;
-
 const Calendar = () => {
   const theme = useTheme();
   const [calendar, setCalendar] = useState(null);
   const [workouts, setWorkouts] = useState([]);
+  const [availableExercises, setAvailableExercises] = useState([]);
   const [selectedWorkout, setSelectedWorkout] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [openForm, setOpenForm] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const currentUser = localStorage.getItem('currentUser');
 
   useEffect(() => {
     fetchWorkouts();
+    fetchExercises();
     fetchCalendar();
   }, []);
 
@@ -78,10 +92,30 @@ const Calendar = () => {
     }
   };
 
+  const fetchExercises = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/exercises');
+      setAvailableExercises(response.data);
+    } catch (error) {
+      console.error('Error fetching exercises:', error);
+    }
+  };
+
   const fetchCalendar = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/calendars/${currentUser}`);
-      setCalendar(response.data || null);
+      const calendarData = response.data || null;
+      setCalendar(calendarData);
+      if (calendarData) {
+        const events = calendarData.workouts.map(workout => ({
+          title: '',
+          start: new Date(workout.date),
+          end: new Date(workout.date),
+          workout_id: workout.workout_id,
+          date: workout.date // Adding date to event
+        }));
+        setEvents(events);
+      }
     } catch (error) {
       console.error('Error fetching calendar:', error);
     }
@@ -104,21 +138,31 @@ const Calendar = () => {
     }
   };
 
+  const handleSelectSlot = ({ start }) => {
+    setSelectedDate(format(start, 'yyyy-MM-dd'));
+    setOpenForm(true);
+  };
+
+  const handleEventClick = (event) => {
+    const workoutDetails = workouts.find(workout => workout._id === event.workout_id);
+    setSelectedEvent({ ...workoutDetails, date: event.date });
+  };
+
   const handleRemoveWorkout = async (workout_id, date) => {
     try {
       const payload = {
         workout_id,
-        date: date
+        date
       };
       console.log('Sending payload to remove workout from calendar:', JSON.stringify(payload, null, 2));
   
       await axios.put(`http://localhost:8000/calendars/${calendar._id}/workouts/remove`, payload);
       fetchCalendar();
+      handleClose(); // Close the dialog after removing the workout
     } catch (error) {
       console.error('Error removing workout from calendar:', error);
     }
-  };  
-  
+  };
 
   const handleScheduleWorkout = async () => {
     if (!selectedWorkout || !selectedDate) {
@@ -128,7 +172,7 @@ const Calendar = () => {
 
     const newCalendarWorkout = {
       workout_id: selectedWorkout,
-      date: new Date(selectedDate).toISOString(),
+      date: selectedDate,
     };
 
     const updatedCalendar = {
@@ -147,46 +191,42 @@ const Calendar = () => {
     }
   };
 
-  const openAddDialog = () => {
-    setOpenForm(true);
-  };
-
   const handleClose = () => {
     setOpenForm(false);
+    setSelectedEvent(null);
   };
 
   return (
     <Background>
       <Overlay />
       <Content>
-        <FormContainer elevation={3}>
+        <FormContainer>
           <Typography variant="h5" sx={{ marginBottom: 2 }}>Calendar</Typography>
           {calendar ? (
             <>
-              <Button variant="contained" onClick={openAddDialog}>Schedule Workout</Button>
-              <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                {calendar.workouts.map((entry, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <StyledCard>
-                      <CardContent>
-                        <Typography variant="h6">
-                          {workouts.find(workout => workout._id === entry.workout_id)?.name}
-                        </Typography>
-                        <Typography variant="subtitle2">
-                          {new Date(entry.date).toLocaleDateString()}
-                        </Typography>
-                        <Button 
-                          variant="contained" 
-                          color="secondary" 
-                          onClick={() => handleRemoveWorkout(entry.workout_id, entry.date)}
-                        >
-                          Remove
-                        </Button>
-                      </CardContent>
-                    </StyledCard>
-                  </Grid>
-                ))}
-              </Grid>
+              <BigCalendar
+                localizer={localizer}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: 500, width: '100%' }}
+                selectable
+                onSelectSlot={handleSelectSlot}
+                onSelectEvent={handleEventClick}
+                eventPropGetter={(event) => ({
+                  style: {
+                    backgroundColor: '#FFD700',
+                    borderRadius: '50%',
+                    opacity: 1,
+                    color: 'white',
+                    border: '0px',
+                    display: 'block',
+                    width: '38px',
+                    height: '38px',
+                    margin: 'auto'
+                  }
+                })}
+              />
             </>
           ) : (
             <Button variant="contained" onClick={handleCreateCalendar}>Create Calendar</Button>
@@ -218,6 +258,7 @@ const Calendar = () => {
                   shrink: true,
                 }}
                 fullWidth
+                disabled
               />
             </DialogContent>
             <DialogActions>
@@ -225,10 +266,32 @@ const Calendar = () => {
               <Button onClick={handleScheduleWorkout} variant="contained">Schedule</Button>
             </DialogActions>
           </Dialog>
+          {selectedEvent && (
+            <Dialog open={!!selectedEvent} onClose={handleClose}>
+              <DialogTitle>Workout Details</DialogTitle>
+              <DialogContent>
+                <Typography variant="h6">{selectedEvent.name}</Typography>
+                <Box mt={2}>
+                  <Typography variant="h6">Exercises:</Typography>
+                  {selectedEvent.exercises.map((exercise, index) => {
+                    const exerciseDetails = availableExercises.find(e => e._id === exercise.exercise_id);
+                    return (
+                      <Typography key={index} variant="body2">
+                        {exerciseDetails ? exerciseDetails.name : 'Unknown Exercise'} - {exercise.reps} reps x {exercise.sets} sets
+                      </Typography>
+                    );
+                  })}
+                </Box>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => handleRemoveWorkout(selectedEvent._id, selectedEvent.date)} color="error" variant="contained">Remove</Button>
+                <Button onClick={handleClose} variant="contained">Close</Button>
+              </DialogActions>
+            </Dialog>
+          )}
         </FormContainer>
       </Content>
     </Background>
-
   );
 }
 

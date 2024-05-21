@@ -1,12 +1,12 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, useTheme, Button, Avatar } from '@mui/material';
+import { AppBar, Toolbar, Typography, useTheme, Button, Box } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import logo from '../images/logo.png';
 
 const Navbar = ({ onLogout }) => {
   const theme = useTheme();
 
-  const userPhotoUrl = "https://example.com/path/to/user/photo.jpg";
+  const currentUser = localStorage.getItem('currentUser');
 
   const activeStyle = {
     color: theme.palette.secondary.main,
@@ -21,7 +21,7 @@ const Navbar = ({ onLogout }) => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ marginBottom: 0 }}>
       <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <NavLink to="/">
@@ -33,10 +33,32 @@ const Navbar = ({ onLogout }) => {
           <NavLink to="/calendar" style={({ isActive }) => (isActive ? activeStyle : linkStyle)}>Calendar</NavLink>
         </div>
 
-        <div>
-          <Avatar src={userPhotoUrl} alt="User Photo" sx={{ bgcolor: theme.palette.secondary.main, marginRight: 2 }} />
-          <Button color="inherit" onClick={onLogout}>Logout</Button>
-        </div>
+        {currentUser && (
+          <Box display="flex" alignItems="center">
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: theme.palette.primary.contrastText, 
+                marginRight: 2, 
+                fontWeight: 'bold'
+              }}
+            >
+              {currentUser}
+            </Typography>
+            <Button 
+              onClick={onLogout}
+              sx={{
+                color: theme.palette.primary.contrastText,
+                fontWeight: 'bold',
+                '&:hover': {
+                  backgroundColor: 'transparent'
+                }
+              }}
+            >
+              LOG OUT
+            </Button>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );

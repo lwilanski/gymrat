@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import styled from 'styled-components';
 import background from '../images/background.jpg';
@@ -46,7 +44,7 @@ const AnimatedMotto = styled(Typography)`
 `;
 
 function Home() {
-  const [motto, setMotto] = useState("Be Stronger");
+  const [motto, setMotto] = useState("Become Stronger");
   const mottos = ["Become Stronger", "Become Fitter", "Become GymRat"];
 
   useEffect(() => {
