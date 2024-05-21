@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, TextField, Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Paper } from '@mui/material';
 import styled from 'styled-components';
-import backgroundImg from '../images/gym.jpeg'; // Zaktualizuj ścieżkę do swojego obrazu tła
+import backgroundImg from '../images/gym.jpeg';
 
 const Background = styled.div`
   background-image: url(${backgroundImg});

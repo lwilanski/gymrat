@@ -1,5 +1,4 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from bson import ObjectId
 import os
 from datetime import datetime
 
@@ -34,13 +33,13 @@ class MongoDB:
         user = await self.db.users.find_one({"_id": username})
         return user
 
-    async def update_user(self, username, update_data):
-        result = await self.db.users.update_one({"_id": username}, {"$set": update_data})
-        return result.modified_count > 0
-
     async def delete_user(self, username):
         result = await self.db.users.delete_one({"_id": username})
         return result.deleted_count
+
+    async def update_user(self, username, update_data):
+        result = await self.db.users.update_one({"_id": username}, {"$set": update_data})
+        return result.modified_count > 0
 
     async def add_workout(self, workout):
         result = await self.db.workouts.insert_one(workout)
@@ -71,13 +70,13 @@ class MongoDB:
         calendar = await self.db.calendars.find_one({"user_id": user_id})
         return calendar
 
-    async def update_calendar(self, calendar_id, update_data):
-        result = await self.db.calendars.update_one({"_id": calendar_id}, {"$set": update_data})
-        return result.modified_count > 0
-
     async def delete_calendar(self, calendar_id):
         result = await self.db.calendars.delete_one({"_id": calendar_id})
         return result.deleted_count
+
+    async def update_calendar(self, calendar_id, update_data):
+        result = await self.db.calendars.update_one({"_id": calendar_id}, {"$set": update_data})
+        return result.modified_count > 0
 
     async def remove_workout_from_calendar(self, calendar_id, workout_id, date: datetime):
         result = await self.db.calendars.update_one(
@@ -85,3 +84,7 @@ class MongoDB:
             {"$pull": {"workouts": {"workout_id": workout_id, "date": date}}}
         )
         return result.modified_count > 0
+
+
+def get_db():
+    return MongoDB()
