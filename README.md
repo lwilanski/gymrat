@@ -18,7 +18,7 @@ Make sure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/youngbucu/gymrat
+   git clone https://github.com/lwilanski/gymrat
    cd gymrat
    ```
 
